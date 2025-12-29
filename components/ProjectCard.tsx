@@ -94,7 +94,7 @@ export default function ProjectCard({ project, activeSlug, onSelect, noAspect, o
         >
           <motion.a
           layoutId={cardLayoutId}
-            className={`block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black ${noAspect ? 'h-full flex flex-col' : ''} bg-black max-w-full border border-white/20`}
+            className={`block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black ${noAspect ? 'h-full flex flex-col' : ''} bg-black max-w-full border border-white/20 cursor-pointer`}
             onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
         >
@@ -125,14 +125,14 @@ export default function ProjectCard({ project, activeSlug, onSelect, noAspect, o
             </motion.div>
             <motion.div
               layoutId={overlayLayoutId}
-              className="absolute inset-0 bg-black/0"
+              className="absolute inset-0 bg-black/0 pointer-events-none"
               animate={{
                 backgroundColor: isDimmed ? "rgba(0,0,0,0.25)" : "rgba(0,0,0,0)",
                 transition: { duration: 0.25, ease: "easeOut" },
               }}
             />
               {/* Title Overlay - Top Left Corner */}
-              <div className="absolute top-0 left-0 p-2">
+              <div className="absolute top-0 left-0 p-2 pointer-events-none z-10">
               <motion.h3
                 layoutId={titleLayoutId}
                   className="text-white text-4xl lg:text-5xl xl:text-6xl 2xl:text-5xl font-black uppercase leading-tight tracking-tight"
