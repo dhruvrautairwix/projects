@@ -2,6 +2,5 @@
 9.[[:space:]]Sheriff[[:space:]]Mall[[:space:]]Project/sheriff-mall-site-plan-overview.png filter=lfs diff=lfs merge=lfs -text
 9.[[:space:]]Sheriff[[:space:]]Mall[[:space:]]Project/sheriff-mall-street-approach-angle.png filter=lfs diff=lfs merge=lfs -text
 
-# Exclude logo files and other small images from LFS
-public/images/Main_Logo.png -filter -diff -merge
-public/images/Main_Logo-removebg-preview.png -filter -diff -merge
+# Exclude ALL public/images files from LFS (they need to work with Next.js Image optimization)
+public/images/** -filter -diff -merge
