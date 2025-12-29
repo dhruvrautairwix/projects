@@ -35,12 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Exclude numbered project directories (source folders with duplicate images)
-/[0-9]*. */
-
-# Large media files (exclude video files - too large for git)
-*.mp4
-*.mov
-*.avi
-*.mkv
+# Large files (exceed GitHub limits)
+8. Eastview Courtyard Loft/eastview-loft-walkthrough.mp4
+9. Sheriff Mall Project/sheriff-mall-site-plan-overview.png
+9. Sheriff Mall Project/sheriff-mall-street-approach-angle.png
 
