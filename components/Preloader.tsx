@@ -1,83 +1,105 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import "./Preloader.css";
 
-const PreloaderContext = createContext<{ isLoading: boolean }>({ isLoading: true });
-
-export const usePreloader = () => useContext(PreloaderContext);
-
-export default function Preloader({ children }: { children: ReactNode }) {
+/**
+ * Preloader Component with Company Logo
+ * 
+ * A full-screen preloader featuring the company logo as the main animated element.
+ * Uses pure CSS animations (no external libraries) for optimal performance.
+ * 
+ * Features:
+ * - Dark gradient background (minimal and modern)
+ * - Company logo centered on screen
+ * - Logo fade-in animation on mount
+ * - Subtle scale/pulse animation while loading
+ * - Smooth fade-out animation when page finishes loading
+ * - Automatically unmounts after fade-out completes
+ * 
+ * Logo Path:
+ * - Update the 'src' prop in the Image component to use your logo file path
+ * - Default: /images/Main_Logo-removebg-preview.png
+ */
+export default function Preloader() {
+  // State to control visibility and animation phase
   const [isLoading, setIsLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [shouldUnmount, setShouldUnmount] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    // show preloader only on first load
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    // Minimum display time for better UX (ensures animation is visible)
+    const minDisplayTime = 2500; // 2.5 seconds - allows logo animation to be seen
+    const startTime = Date.now();
 
-    return () => clearTimeout(timer);
+    /**
+     * Function to hide preloader
+     * Calculates remaining time to meet minimum display requirement
+     * This ensures the logo animation is visible even on fast connections
+     */
+    const hidePreloader = () => {
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+      setTimeout(() => {
+        // Start fade-out animation
+        setIsFadingOut(true);
+        
+        // Unmount component after fade-out animation completes (800ms)
+        // This ensures the fade-out animation finishes before removing from DOM
+        setTimeout(() => {
+          setIsLoading(false);
+          setShouldUnmount(true);
+        }, 800);
+      }, remainingTime);
+    };
+
+    // Check if page is already loaded (handles refresh scenarios)
+    if (document.readyState === "complete") {
+      hidePreloader();
+    } else {
+      // Wait for page to fully load (all assets, images, scripts)
+      window.addEventListener("load", hidePreloader);
+      
+      // Fallback: hide after maximum wait time (5 seconds) 
+      // Prevents preloader from showing indefinitely if load event doesn't fire
+      const maxWaitTime = setTimeout(hidePreloader, 5000);
+
+      // Cleanup function - removes event listeners on component unmount
+      return () => {
+        window.removeEventListener("load", hidePreloader);
+        clearTimeout(maxWaitTime);
+      };
+    }
   }, []);
 
+  // Don't render if component should be unmounted
+  // This completely removes the component from the DOM after animations
+  if (shouldUnmount || !isLoading) {
+    return null;
+  }
+
+  // Determine CSS class based on animation phase
+  // fadeIn: Initial entrance animation
+  // fadeOut: Exit animation before unmount
+  const preloaderClass = isFadingOut 
+    ? "preloader fadeOut" 
+    : "preloader fadeIn";
+
   return (
-    <PreloaderContext.Provider value={{ isLoading }}>
-      {/* Page content - always visible, not hidden by opacity */}
-      <div className="relative">
-        {children}
+    <div className={preloaderClass}>
+      {/* Logo Container - Centers the logo */}
+      <div className="logoContainer">
+        <Image
+          src="/images/Main_Logo-removebg-preview.png"
+          alt="Blueprint 3D Studios Logo"
+          width={500}
+          height={500}
+          priority
+          className="logoImage"
+        />
       </div>
-
-      {/* Preloader overlay - only shows on top when loading */}
-      {isMounted && (
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              key="preloader"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden"
-            >
-              {/* Main logo container */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ 
-                  opacity: [0.8, 1, 0.8],
-                  scale: [0.95, 1, 0.95],
-                }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 1.05,
-                }}
-                transition={{ 
-                  duration: 1.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="flex items-center justify-center relative"
-              >
-                {/* Logo with gentle fade/pulse */}
-                <motion.div
-                  className="relative z-10"
-                >
-                  <Image
-                    src="/images/Main_Logo-removebg-preview.png"
-                    alt="Company Logo"
-                    width={280}
-                    height={280}
-                    className="object-contain w-[280px] h-[280px] md:w-[360px] md:h-[360px] lg:w-[420px] lg:h-[420px] drop-shadow-2xl"
-                    priority
-                  />
-                </motion.div>
-
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-    </PreloaderContext.Provider>
+    </div>
   );
 }

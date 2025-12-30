@@ -182,8 +182,8 @@ export default function Navbar() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`hidden lg:block fixed inset-x-0 top-0 z-[9999] px-6 xl:px-12 py-2 transition-colors duration-300 ${
-          isScrolled ? "bg-black" : "bg-transparent"
+        className={`hidden lg:block fixed inset-x-0 top-0 z-[9999] px-6 xl:px-12 py-2 transition-colors duration-300 backdrop-blur-[15px] ${
+          isScrolled ? "bg-black/80" : "bg-black/40"
         }`}
       >
         <div className="mx-auto max-w-[1800px] flex items-center justify-between gap-6">
@@ -226,8 +226,8 @@ export default function Navbar() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`lg:hidden fixed inset-x-0 top-0 z-[9999] px-4 py-2 sm:px-6 transition-colors duration-300 ${
-          isScrolled ? "bg-black" : "bg-transparent"
+        className={`lg:hidden fixed inset-x-0 top-0 z-[9999] px-4 py-2 sm:px-6 transition-colors duration-300 backdrop-blur-[15px] ${
+          isScrolled ? "bg-black/80" : "bg-black/40"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-center text-center">
@@ -250,7 +250,7 @@ export default function Navbar() {
       </motion.div>
 
       {/* Desktop Navigation - Bottom Left */}
-      <div className="hidden lg:flex fixed bottom-6 left-12 z-[9999] items-center gap-5 xl:gap-6">
+      <div className="hidden lg:flex fixed bottom-0 left-0 z-[9999] items-center gap-5 xl:gap-6 px-4 py-4 backdrop-blur-[8px] bg-black/30">
         <Link href="/" className="group flex flex-col items-center gap-1">
           <Home
             className={`h-5 w-5 xl:h-6 xl:w-6 transition-all ${
